@@ -1,0 +1,147 @@
+.estrutura {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+}
+
+.lateral {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem;
+  background: var(--cor-superficie);
+  border-right: 1px solid var(--cor-borda);
+  overflow-y: auto;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--cor-texto);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.125rem;
+}
+
+.marcaSimbolo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--cor-botao);
+  color: var(--cor-botao-texto);
+  font-weight: 900;
+}
+
+.navegacao {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.grupoNavegacao {
+  margin-top: 0.75rem;
+  padding: 0 0.75rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  color: var(--cor-texto-3);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.link:hover {
+  background: var(--cor-superficie-2);
+}
+
+.linkAtivo {
+  background: var(--cor-superficie-2);
+  color: var(--cor-texto);
+  border-left: 3px solid var(--cor-destaque);
+}
+
+.rodapeLateral {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.conteudo {
+  min-width: 0;
+  padding: 2rem clamp(1rem, 3vw, 2.5rem) 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.navegacaoInferior {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .estrutura {
+    grid-template-columns: 1fr;
+  }
+
+  .lateral {
+    display: none;
+  }
+
+  .conteudo {
+    padding: 1.25rem 1rem 6rem;
+  }
+
+  .navegacaoInferior {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 20;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background: var(--cor-superficie);
+    border-top: 1px solid var(--cor-borda);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .navegacaoInferior a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cor-texto-2);
+    text-decoration: none;
+    text-align: center;
+    padding: 0.25rem;
+  }
+
+  .navegacaoInferior a[aria-current='page'] {
+    color: var(--cor-texto);
+    border-top: 3px solid var(--cor-destaque);
+  }
+}
+
+.topoMovel {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .topoMovel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+}

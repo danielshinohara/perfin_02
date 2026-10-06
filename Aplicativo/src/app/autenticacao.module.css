@@ -1,0 +1,68 @@
+.pagina {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem 1rem;
+}
+
+.caixa {
+  width: min(100%, 440px);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--cor-texto);
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+.simbolo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--cor-botao);
+  color: var(--cor-botao-texto);
+  font-weight: 900;
+  font-size: 1.375rem;
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.separador {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--cor-texto-2);
+  font-size: 0.8125rem;
+}
+
+.separador::before,
+.separador::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.detalhes summary {
+  cursor: pointer;
+  color: var(--cor-texto);
+  font-weight: 700;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.legal {
+  font-size: 0.8125rem;
+}

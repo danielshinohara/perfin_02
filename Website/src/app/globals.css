@@ -1,0 +1,153 @@
+/* Identidade visual Perfin: base creme/cinza/quase-preto, verde como assinatura. Sem sombras nem gradientes. */
+:root {
+  --blue: #004c88;
+  --green: #4cac87;
+  --gray: #6d6e71;
+
+  --cor-fundo: #f9f4f4;
+  --cor-superficie: #ffffff;
+  --cor-borda: #e6e7e8;
+  --cor-texto: #221f20;
+  --cor-texto-2: var(--gray);
+  --cor-destaque-texto: #2e7a5c;
+  --cor-botao: #221f20;
+  --cor-botao-texto: #f9f4f4;
+  --cor-foco: #2b93d1;
+  --serie-1: #2e8a66;
+  --fonte: Avenir, 'Avenir Next', 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cor-fundo: #181617;
+    --cor-superficie: #221f20;
+    --cor-borda: #3a3738;
+    --cor-texto: #f9f4f4;
+    --cor-texto-2: #bcbec0;
+    --cor-destaque-texto: #78b79d;
+    --cor-botao: #f9f4f4;
+    --cor-botao-texto: #221f20;
+    --serie-1: #3a9a74;
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto-2);
+  font-family: var(--fonte);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--cor-texto);
+  line-height: 1.1;
+  margin: 0 0 1rem;
+}
+
+h1 {
+  font-size: clamp(2.25rem, 6vw, 3.375rem);
+  font-weight: 900;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 800;
+}
+
+a {
+  color: var(--cor-destaque-texto);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+.conteiner {
+  width: min(100% - 2rem, 1120px);
+  margin-inline: auto;
+}
+
+.secao {
+  padding-block: clamp(3.5rem, 9vw, 7.5rem);
+}
+
+.secao-alternada {
+  background: var(--cor-superficie);
+  border-block: 1px solid var(--cor-borda);
+}
+
+.rotulo {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cor-destaque-texto);
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--cor-botao);
+  background: var(--cor-botao);
+  color: var(--cor-botao-texto);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.botao:hover {
+  background: var(--green);
+  border-color: var(--green);
+  color: #221f20;
+}
+
+.botao-secundario {
+  background: transparent;
+  color: var(--cor-texto);
+  border-color: var(--cor-borda);
+}
+
+.grade {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+}
+
+.cartao {
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  padding: 1.5rem;
+  min-width: 0;
+}
+
+.provisorio {
+  border: 1px dashed var(--cor-borda);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

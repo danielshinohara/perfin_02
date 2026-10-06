@@ -1,0 +1,55 @@
+# ============================================================
+# .gitignore — Perfin_02
+# ============================================================
+# IMPORTANTE: a pasta .claude/ (CLAUDE.md, agents/, skills/)
+# DEVE ser versionada e enviada ao repositório do GitHub.
+# Não adicione ".claude" nem "CLAUDE.md" a este arquivo.
+# Apenas arquivos locais/pessoais do Claude Code são ignorados.
+# ============================================================
+.claude/settings.local.json
+.claude/logs/
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+# Anotações locais com credenciais (nunca versionar)
+DadosPerfin.txt
+
+# Dependências
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Build e saídas
+dist/
+build/
+out/
+.next/
+coverage/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# Saídas do script de indicadores (dados gerados)
+Aplicativo/scripts/indicadores/saida/
+
+# Logs e temporários
+*.log
+*.tmp
+tmp/
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Arquivos temporários do Office
+~$*
