@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { Sessao } from '@/lib/auth/sessao'
 import estilos from '@/app/portal.module.css'
 import { BotaoInstalar } from '@/components/pwa/BotaoInstalar'
-import { ITENS_ADMIN, ITENS_FERRAMENTAS, ITENS_PAINEIS, type ItemNavegacao } from './itens-navegacao'
+import { itensAdmin, ITENS_FERRAMENTAS, ITENS_PAINEIS, type ItemNavegacao } from './itens-navegacao'
 import { LinkNavegacao } from './LinkNavegacao'
 
 function Grupo({ titulo, itens }: { titulo: string; itens: ItemNavegacao[] }) {
@@ -16,7 +16,7 @@ function Grupo({ titulo, itens }: { titulo: string; itens: ItemNavegacao[] }) {
   )
 }
 
-export function NavegacaoLateral({ sessao }: { sessao: Sessao }) {
+export function NavegacaoLateral({ sessao, pendentes }: { sessao: Sessao; pendentes: number }) {
   return (
     <aside className={estilos.lateral}>
       <Link href="/" className={estilos.marca}>
@@ -28,7 +28,7 @@ export function NavegacaoLateral({ sessao }: { sessao: Sessao }) {
       <nav className={estilos.navegacao} aria-label="Navegação principal">
         <Grupo titulo="Painéis" itens={ITENS_PAINEIS} />
         <Grupo titulo="Ferramentas" itens={ITENS_FERRAMENTAS} />
-        {sessao.papel === 'admin' && <Grupo titulo="Administração" itens={ITENS_ADMIN} />}
+        {sessao.papel === 'admin' && <Grupo titulo="Administração" itens={itensAdmin(pendentes)} />}
       </nav>
       <div className={estilos.rodapeLateral}>
         <BotaoInstalar />

@@ -1,11 +1,15 @@
 import 'server-only'
-import type { ClienteSupabase } from '@/lib/supabase/servidor'
+import { cache } from 'react'
+import { lerSituacao, type Situacao } from '@/lib/auth/validacao'
+import { criarClienteServidor, type ClienteSupabase } from '@/lib/supabase/servidor'
 
 export interface UsuarioPortal {
   userId: string
   email: string
   nome: string | null
-  bloqueado: boolean
+  situacao: Situacao
+  provedor: 'google' | 'email' | null
+  emailConfirmado: boolean
   criadoEm: string
   ultimoAcessoEm: string | null
 }
@@ -14,22 +18,37 @@ export interface UsuarioPortal {
 export async function listarUsuarios(supabase: ClienteSupabase): Promise<UsuarioPortal[]> {
   const { data, error } = await supabase
     .from('perfis')
-    .select('user_id, email, nome, bloqueado, criado_em, ultimo_acesso_em')
-    .order('ultimo_acesso_em', { ascending: false, nullsFirst: false })
+    .select('user_id, email, nome, situacao, provedor, email_confirmado_em, criado_em, ultimo_acesso_em')
+    .order('criado_em', { ascending: false })
   if (error) throw new Error('Não foi possível carregar os usuários')
   return (data ?? []).map((p) => ({
     userId: p.user_id,
     email: p.email,
     nome: p.nome,
-    bloqueado: p.bloqueado,
+    situacao: lerSituacao(p.situacao),
+    provedor: p.provedor === 'google' || p.provedor === 'email' ? p.provedor : null,
+    emailConfirmado: p.email_confirmado_em !== null,
     criadoEm: p.criado_em,
     ultimoAcessoEm: p.ultimo_acesso_em,
   }))
 }
 
-export async function alterarBloqueio(supabase: ClienteSupabase, userId: string, bloqueado: boolean): Promise<void> {
-  const { data, error } = await supabase.from('perfis').update({ bloqueado }).eq('user_id', userId).select('user_id')
-  if (error || !data?.length) throw new Error('Não foi possível alterar o acesso do usuário')
+/** Cadastros aguardando aprovação (selo do menu do admin); uma consulta por requisição. */
+export const contarPendentes = cache(async (): Promise<number> => {
+  const supabase = await criarClienteServidor()
+  const { count, error } = await supabase.from('perfis').select('user_id', { count: 'exact', head: true }).eq('situacao', 'pendente')
+  if (error) throw new Error('Não foi possível contar os cadastros pendentes')
+  return count ?? 0
+})
+
+/** Aprova, bloqueia ou desbloqueia (função do banco que exige admin e registra quem alterou). */
+export async function definirSituacao(
+  supabase: ClienteSupabase,
+  userId: string,
+  situacao: Exclude<Situacao, 'pendente'>,
+): Promise<void> {
+  const { error } = await supabase.rpc('definir_situacao_usuario', { p_user_id: userId, p_situacao: situacao })
+  if (error) throw new Error('Não foi possível alterar o acesso do usuário')
 }
 
 export interface AlteracaoRegra {

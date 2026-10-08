@@ -1,4 +1,4 @@
-const ROTAS_PUBLICAS = ['/login', '/acesso-negado', '/offline']
+const ROTAS_PUBLICAS = ['/login', '/login/recuperar', '/conta/confirmar', '/acesso-negado', '/offline']
 const PREFIXOS_PUBLICOS = ['/auth/', '/api/publico/']
 
 /** Rotas acessíveis sem login (todas as demais exigem sessão). */

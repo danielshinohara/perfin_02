@@ -1,0 +1,48 @@
+# Carga diária dos indicadores (BCB, IBGE e Focus) no Supabase.
+# Requer os secrets SUPABASE_URL e SUPABASE_SECRET_KEY (Settings → Secrets and variables → Actions).
+name: Carga de indicadores
+
+on:
+  schedule:
+    # 12:00 UTC = 9:00 em Brasília, de segunda a sexta.
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: carga-indicadores
+  cancel-in-progress: false
+
+jobs:
+  carga:
+    name: Coletar e gravar
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: Aplicativo/scripts/indicadores
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Executar o script
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SECRET_KEY" ]; then
+            echo "::error::Cadastre os secrets SUPABASE_URL e SUPABASE_SECRET_KEY no repositório."
+            exit 1
+          fi
+          python indicadores_brasil.py
+      - name: Guardar os CSVs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: indicadores-csv
+          path: Aplicativo/scripts/indicadores/saida/
+          retention-days: 30
+          if-no-files-found: ignore

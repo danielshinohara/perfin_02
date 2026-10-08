@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { INSTITUCIONAL } from '@/conteudo/institucional'
-import { buscarTermometro, urlDoPortal } from '@/lib/termometro'
+import { linksDeAcesso } from '@/lib/portal'
+import { buscarTermometro } from '@/lib/termometro'
+import { Cabecalho } from '@/components/Cabecalho'
 import { SecaoTermometro } from '@/components/SecaoTermometro'
 
 export const metadata: Metadata = {
@@ -12,17 +14,12 @@ export const revalidate = 3600
 
 export default async function PaginaInicial() {
   const termometro = await buscarTermometro()
-  const portal = urlDoPortal('/')
+  const { entrar, criarConta } = linksDeAcesso()
   const { quemSomos, oQueFazemos, contato } = INSTITUCIONAL
   return (
     <>
-      <header className="conteiner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBlock: '1.25rem', gap: '1rem' }}>
-        <strong style={{ color: 'var(--cor-texto)', fontSize: '1.25rem' }}>{INSTITUCIONAL.titulo}</strong>
-        <a className="botao" href={portal}>
-          Entrar no portal
-        </a>
-      </header>
-      <main>
+      <Cabecalho />
+      <main id="inicio">
         <section className="secao" aria-labelledby="titulo-principal">
           <div className="conteiner">
             <span className="rotulo">Perfin</span>
@@ -31,8 +28,8 @@ export default async function PaginaInicial() {
               <a className="botao" href="#termometro">
                 Ver o termômetro da economia
               </a>
-              <a className="botao botao-secundario" href={portal}>
-                Instale o app do portal
+              <a className="botao botao-secundario" href={criarConta}>
+                Criar conta no portal
               </a>
             </div>
           </div>
@@ -60,9 +57,14 @@ export default async function PaginaInicial() {
               computador direto pelo navegador: no Android e no Chrome, use “Instalar app”; no iPhone, toque em Compartilhar e “Adicionar à
               Tela de Início”.
             </p>
-            <a className="botao" href={portal}>
-              Entrar no portal
-            </a>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+              <a className="botao" href={entrar}>
+                Entrar no portal
+              </a>
+              <a className="botao botao-secundario" href={criarConta}>
+                Criar conta
+              </a>
+            </div>
           </div>
         </section>
       </main>

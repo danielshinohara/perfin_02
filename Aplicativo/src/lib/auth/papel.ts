@@ -24,3 +24,24 @@ export function papelDaSessao(email: string | null | undefined, amr: unknown, em
   const ehEmailAdmin = normalizarEmail(email) !== '' && normalizarEmail(email) === normalizarEmail(emailAdmin)
   return ehEmailAdmin && metodoDeLogin(amr) === 'senha' ? 'admin' : 'usuario'
 }
+
+const METODOS_DE_LINK = new Set(['recovery', 'otp'])
+const JANELA_RECUPERACAO_SEGUNDOS = 15 * 60
+
+/**
+ * Sessão aberta há pouco por um link de e-mail (recuperação de senha). Só ela pode definir uma
+ * nova senha sem a senha atual: assim uma sessão do Google não consegue criar uma senha e virar admin.
+ */
+export function ehSessaoDeRecuperacao(amr: unknown, agoraSegundos: number): boolean {
+  if (!Array.isArray(amr)) return false
+  return amr.some((entrada: unknown) => {
+    if (typeof entrada !== 'object' || entrada === null) return false
+    const { method, timestamp } = entrada as { method?: unknown; timestamp?: unknown }
+    return (
+      typeof method === 'string' &&
+      METODOS_DE_LINK.has(method) &&
+      typeof timestamp === 'number' &&
+      agoraSegundos - timestamp <= JANELA_RECUPERACAO_SEGUNDOS
+    )
+  })
+}
