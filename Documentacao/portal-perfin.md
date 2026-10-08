@@ -10,10 +10,15 @@
 
 | Perfil | Como entra | Pode |
 |---|---|---|
-| Usuário | "Entrar com Google" | painéis, calculadora, relatórios, agenda, assistente |
-| Administrador | "Acesso administrador" (e-mail de `ADMIN_USUARIO` + senha do Supabase Auth) | tudo do usuário (exceto recursos Google) + Usuários e Alertas |
+| Usuário | "Continuar com Google" ou e-mail e senha (aba *Entrar*) | painéis, calculadora, assistente; relatórios e agenda só com login Google |
+| Administrador | e-mail de `ADMIN_USUARIO` + senha (aba *Entrar*) | tudo do usuário (exceto recursos Google) + Usuários e Alertas |
 
-O papel é decidido pelo método de login (`amr` do JWT): o mesmo e-mail entrando pelo Google é usuário. A checagem existe no servidor (`lib/auth/papel.ts`) e no banco (`public.eh_admin()` no RLS). Usuário bloqueado vê "Acesso não autorizado".
+- **Entrar / Criar conta:** a tela fica no portal (`/login`, `/login?modo=cadastro`); os botões do cabeçalho do site levam para ela. Há uma única sessão, no domínio do portal.
+- **Cadastro:** aberto (e-mail confirmado ou Google). A conta nasce **aguardando aprovação** (`perfis.situacao = 'pendente'`) e vê a tela "Cadastro recebido" até o admin aprovar em *Usuários*. O e-mail que está em `administradores` já nasce ativo.
+- **Situações:** `pendente` → `/aguardando-aprovacao`; `ativo` → portal; `bloqueado` → "Acesso não autorizado". O admin muda a situação pela função `definir_situacao_usuario` (registra quem e quando).
+- **Links de e-mail:** `/auth/confirmar` leva a `/conta/confirmar` (botão; o token só é usado no clique). Recuperação de senha: `/login/recuperar` → link → `/conta/nova-senha`, que só aceita sessão aberta pelo link há até 15 minutos (uma sessão do Google não consegue criar senha e virar admin).
+- **Aprovação:** só contas com e-mail confirmado podem ser aprovadas (regra também no banco).
+- **Papel:** decidido pelo método de login (`amr` do JWT): admin só com senha **e** e-mail em `administradores`. A checagem existe no servidor (`lib/auth/papel.ts`) e no banco (`public.eh_admin()` no RLS).
 
 ## Arquitetura (resumo)
 
@@ -53,11 +58,11 @@ Um único teste: `npx vitest run src/lib/dominio/inflacao.test.ts`. Script Pytho
 
 ## Limitações conhecidas
 
-- Os limites de perguntas do assistente (10/min por usuário) e de tentativas de login do admin (5 a cada 15 min por IP e por e-mail) são em memória: cada instância serverless tem o próprio contador.
-- Quem pode entrar com Google é controlado no Google Cloud (decisão do projeto); o portal oferece o bloqueio manual pelo admin.
+- Os limites de perguntas do assistente (10/min por usuário), de login (5 a cada 15 min por IP e por e-mail), de cadastro (5/hora por IP) e de nova senha (3/hora) são em memória: cada instância serverless tem o próprio contador.
+- Quem entra com senha não tem token do Google (Relatórios e Agenda pedem login Google). O Google em modo *Testing* só aceita os usuários de teste.
 - O rascunho do Gmail recalcula o resumo com os dados atuais; se os dados forem revisados depois da geração, o texto pode diferir da planilha anexa.
 - Ícones do PWA são provisórios até o envio do logo oficial.
 - Textos institucionais do site são provisórios (`Website/src/conteudo/institucional.ts`).
 - O login Google dentro do app instalado no iPhone precisa ser validado no aparelho.
-- A carga de dados é manual (rodar o script); um agendamento (GitHub Actions) fica como evolução.
+- A carga de dados roda pela Action *Carga de indicadores* (dias úteis, 9h) ou manualmente pelo script.
 - Modelo do Gemini fixo em `src/lib/gemini/assistente.ts` (`gemini-2.5-flash`); atualize quando o Google descontinuar a versão.

@@ -19,10 +19,17 @@ export const ITENS_FERRAMENTAS: ItemNavegacao[] = [
   { href: '/assistente', rotulo: 'Assistente' },
 ]
 
-export const ITENS_ADMIN: ItemNavegacao[] = [
+const ITENS_ADMIN: ItemNavegacao[] = [
   { href: '/admin/usuarios', rotulo: 'Usuários' },
   { href: '/admin/alertas', rotulo: 'Alertas' },
 ]
+
+/** Itens de administração; "Usuários" mostra quantos cadastros aguardam aprovação. */
+export function itensAdmin(pendentes: number): ItemNavegacao[] {
+  if (pendentes <= 0) return [...ITENS_ADMIN]
+  const sufixo = ` (${pendentes} pendente${pendentes > 1 ? 's' : ''})`
+  return ITENS_ADMIN.map((item) => (item.href === '/admin/usuarios' ? { ...item, rotulo: item.rotulo + sufixo } : item))
+}
 
 export const ITENS_CELULAR: ItemNavegacao[] = [
   { href: '/', rotulo: 'Visão geral' },

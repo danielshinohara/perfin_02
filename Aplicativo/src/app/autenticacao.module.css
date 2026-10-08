@@ -54,13 +54,77 @@
   border-top: 1px solid var(--cor-borda);
 }
 
-.detalhes summary {
-  cursor: pointer;
-  color: var(--cor-texto);
-  font-weight: 700;
+.abas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: var(--raio);
+  background: var(--cor-superficie-2);
+}
+
+.aba {
+  display: grid;
+  place-items: center;
   min-height: 44px;
+  border-radius: calc(var(--raio) - 2px);
+  color: var(--cor-texto-2);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.aba[aria-current='page'] {
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  box-shadow: 0 1px 2px rgba(34, 31, 32, 0.12);
+}
+
+.iconeGoogle {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--cor-borda);
+  font-weight: 900;
+  font-size: 0.8125rem;
+}
+
+.campoSenha {
   display: flex;
-  align-items: center;
+  gap: 0.5rem;
+}
+
+.campoSenha input {
+  flex: 1;
+  min-width: 0;
+}
+
+.botaoMostrar {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio);
+  background: transparent;
+  color: var(--cor-texto);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dica {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--cor-texto-2);
+}
+
+.linkSecundario {
+  align-self: flex-start;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--cor-info);
 }
 
 .legal {

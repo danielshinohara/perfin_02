@@ -7,7 +7,7 @@
  *  - páginas de dados (painéis): rede primeiro, cache se estiver offline (máx. 30 páginas);
  *  - login, APIs, relatórios, agenda, assistente e admin: somente rede (nunca vão para o cache);
  *  - o cache de páginas é apagado ao sair (POST /auth/sair) e sempre que a sessão acaba
- *    (navegação para /login ou /acesso-negado), para não mostrar dados de outro usuário.
+ *    (navegação para /login, /acesso-negado ou /aguardando-aprovacao), para não mostrar dados de outro usuário.
  */
 const MODELO = String.raw`
 const VERSAO = '__VERSAO__';
@@ -16,7 +16,7 @@ const CACHE_PAGINAS = 'perfin-paginas';
 const PAGINA_OFFLINE = '/offline';
 
 const PAGINAS_COM_CACHE = ['/', '/paineis', '/inflacao', '/juros', '/cambio', '/atividade', '/expectativas'];
-const PAGINAS_SEM_SESSAO = ['/login', '/acesso-negado'];
+const PAGINAS_SEM_SESSAO = ['/login', '/acesso-negado', '/aguardando-aprovacao'];
 const MAXIMO_PAGINAS = 30;
 
 function estrategiaPara(url, metodo, ehNavegacao) {

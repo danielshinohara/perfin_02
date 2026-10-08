@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Portal Perfin — Configuração do login</title>
+<style>
+  @page { size: A4; margin: 16mm 15mm 18mm; }
+  :root { --texto: #221f20; --texto-2: #4d4d4f; --borda: #d9dadb; --verde: #2e7a5c; --verde-claro: #e7f4ee; --azul: #004c88; --azul-claro: #e6f0f8; --alerta: #8a5a00; --alerta-claro: #fff4dc; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Avenir, Arial, sans-serif; color: var(--texto); font-size: 10.5pt; line-height: 1.45; margin: 0; }
+  h1 { font-size: 22pt; margin: 0 0 4pt; }
+  h2 { font-size: 14pt; margin: 18pt 0 6pt; padding-bottom: 3pt; border-bottom: 2px solid var(--verde); page-break-after: avoid; }
+  h3 { font-size: 11.5pt; margin: 12pt 0 4pt; page-break-after: avoid; }
+  p { margin: 4pt 0; }
+  .capa { border-left: 6px solid var(--verde); padding: 6pt 0 6pt 12pt; margin-bottom: 12pt; }
+  .sub { color: var(--texto-2); }
+  .marca { display: inline-grid; place-items: center; width: 26pt; height: 26pt; border-radius: 6pt; background: var(--texto); color: #f9f4f4; font-weight: 900; margin-right: 6pt; vertical-align: middle; }
+  code, .valor { font-family: Consolas, 'Courier New', monospace; font-size: 9.5pt; background: #f3f3f3; border: 1px solid var(--borda); border-radius: 3pt; padding: 0 3pt; word-break: break-all; }
+  pre { font-family: Consolas, 'Courier New', monospace; font-size: 9pt; background: #f3f3f3; border: 1px solid var(--borda); border-radius: 4pt; padding: 6pt 8pt; white-space: pre-wrap; word-break: break-all; margin: 4pt 0; page-break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 6pt 0; page-break-inside: avoid; }
+  th, td { border: 1px solid var(--borda); padding: 4pt 6pt; text-align: left; vertical-align: top; }
+  th { background: #f5f5f5; }
+  .caixa { border-radius: 5pt; padding: 7pt 10pt; margin: 8pt 0; page-break-inside: avoid; }
+  .destaque { background: var(--verde-claro); border: 1px solid var(--verde); }
+  .info { background: var(--azul-claro); border: 1px solid var(--azul); }
+  .aviso { background: var(--alerta-claro); border: 1px solid var(--alerta); }
+  .passos { list-style: none; padding: 0; margin: 4pt 0; counter-reset: passo; }
+  .passos > li { position: relative; padding: 3pt 0 3pt 26pt; counter-increment: passo; page-break-inside: avoid; }
+  .passos > li::before { content: '☐'; position: absolute; left: 4pt; top: 1pt; font-size: 13pt; }
+  .ok { color: var(--verde); font-weight: 700; }
+  .etapa { display: inline-block; min-width: 18pt; font-weight: 800; color: var(--verde); }
+  .quebra { page-break-before: always; }
+  .rodape { margin-top: 16pt; font-size: 8.5pt; color: var(--texto-2); border-top: 1px solid var(--borda); padding-top: 4pt; }
+</style>
+</head>
+<body>
+
+<div class="capa">
+  <h1><span class="marca">P</span>Portal Perfin — Configuração do login</h1>
+  <p class="sub">Entrar / Criar conta com e-mail e senha ou Google, aprovação de novos usuários e automações do GitHub.</p>
+  <p class="sub">Issue <code>#2</code> · Versão de 08/10/2026</p>
+</div>
+
+<div class="caixa destaque">
+  <strong>URL de redirecionamento para colar no Google Cloud</strong> (a mesma para o site e para o portal):
+  <pre>https://hesrhxonnnoyjjodebzm.supabase.co/auth/v1/callback</pre>
+  O Google devolve o login ao Supabase, e o Supabase devolve ao portal. Por isso não se cadastra no Google a URL do site nem a do portal como redirecionamento.
+</div>
+
+<h2>Como vai funcionar</h2>
+<table>
+  <tr><th style="width:28%">Onde</th><th>O que a pessoa vê</th></tr>
+  <tr><td>Site (cabeçalho, canto superior direito)</td><td>Botões <strong>Entrar</strong> e <strong>Criar conta</strong>. Eles abrem a tela de login do portal (uma única sessão, no domínio do portal).</td></tr>
+  <tr><td>Portal — tela de login</td><td>Abas <strong>Entrar</strong> | <strong>Criar conta</strong>, o botão <strong>Continuar com Google</strong> e, abaixo, o e-mail e a senha. Tem também "Esqueci minha senha".</td></tr>
+  <tr><td>Conta nova (e-mail ou Google)</td><td>Confirma o e-mail e vê a tela <strong>"Cadastro recebido"</strong> até um administrador aprovar.</td></tr>
+  <tr><td>Administrador</td><td>Entra pela mesma aba <em>Entrar</em> com o e-mail de <code>ADMIN_USUARIO</code> e a senha. Em <strong>Administração → Usuários</strong> aprova, recusa, bloqueia ou desbloqueia. O menu mostra quantos cadastros estão pendentes.</td></tr>
+  <tr><td>Quem entra com senha</td><td>Usa painéis, calculadora e assistente. Relatórios e Agenda pedem login com Google, porque dependem do Drive, da Agenda e do Gmail.</td></tr>
+</table>
+
+<h2>Divisão de tarefas</h2>
+<h3>O que eu (Claude) faço</h3>
+<table>
+  <tr><th style="width:6%">#</th><th>Tarefa</th><th style="width:18%">Situação</th></tr>
+  <tr><td>1</td><td>Issue no GitHub e branch <code>feat/login-email-cadastro</code></td><td class="ok">feito</td></tr>
+  <tr><td>2</td><td>GitHub Actions: CI (Aplicativo, Website, Python, varredura de segredos), carga diária de indicadores, Dependabot e modelos de PR/Issue</td><td class="ok">feito</td></tr>
+  <tr><td>3</td><td>Migração <code>0002_cadastro_e_aprovacao.sql</code>: <code>perfis.situacao</code>, <code>provedor</code>, auditoria, função <code>definir_situacao_usuario</code>, remoção do hook antigo</td><td class="ok">feito</td></tr>
+  <tr><td>4</td><td>Portal: telas Entrar/Criar conta, Esqueci minha senha, Nova senha, Cadastro recebido, Usuários com aprovação; rota <code>/auth/confirmar</code></td><td class="ok">feito</td></tr>
+  <tr><td>5</td><td>Site: cabeçalho com Entrar e Criar conta</td><td class="ok">feito</td></tr>
+  <tr><td>6</td><td>Testes automatizados, revisão de código e documentação</td><td class="ok">feito</td></tr>
+  <tr><td>7</td><td>Pull Request vinculada à Issue, com o CI verde</td><td>em seguida</td></tr>
+  <tr><td>8</td><td>Aplicar as migrações 0001 e 0002 no Supabase (pelo conector) e conferir os avisos de segurança</td><td>em seguida</td></tr>
+  <tr><td>9</td><td>Merge da PR e proteção da branch <code>main</code> (merge só com o CI verde)</td><td>em seguida</td></tr>
+</table>
+
+<h3>O que só você pode fazer (este documento)</h3>
+<p>As etapas abaixo dependem das suas contas e dos seus segredos. Faça <strong>na ordem</strong>: cada uma usa valores da anterior.</p>
+<table>
+  <tr><th style="width:8%">Etapa</th><th>Onde</th><th style="width:20%">Tempo estimado</th></tr>
+  <tr><td><span class="etapa">A</span></td><td>Vercel — criar o projeto do Portal e cadastrar as variáveis</td><td>15 min</td></tr>
+  <tr><td><span class="etapa">B</span></td><td>Google Cloud — redirecionamento, origens, escopos e publicação</td><td>10 min</td></tr>
+  <tr><td><span class="etapa">C</span></td><td>Supabase — provedores, URLs, modelos de e-mail e SMTP</td><td>20 min</td></tr>
+  <tr><td><span class="etapa">D</span></td><td>Supabase — administrador</td><td>5 min</td></tr>
+  <tr><td><span class="etapa">E</span></td><td>GitHub — secrets da carga diária</td><td>5 min</td></tr>
+  <tr><td><span class="etapa">F</span></td><td>Teste final (checklist)</td><td>15 min</td></tr>
+</table>
+
+<div class="caixa aviso">
+  <strong>Segurança, antes de tudo:</strong> o arquivo <code>DadosPerfin.txt</code> tem senhas em texto puro numa pasta do OneDrive. Copie os valores para o <code>.env</code> e para a Vercel, <strong>apague o arquivo</strong> e gere credenciais novas (client secret do Google, chave do Gemini, senha do banco e senha do admin).
+</div>
+
+<h2 class="quebra"><span class="etapa">A</span> Vercel</h2>
+<p>Hoje existe só o projeto <code>perfin-02-site</code> (o Website). O Portal (pasta <code>Aplicativo</code>) ainda não está na Vercel.</p>
+<ol class="passos">
+  <li><strong>Add New → Project</strong> → importe <code>danielshinohara/perfin_02</code> → <strong>Root Directory</strong> = <code>Aplicativo</code> → Framework Next.js → Deploy. Anote a URL gerada (abaixo chamada de <code>&lt;URL-DO-PORTAL&gt;</code>, por exemplo <code>https://perfin-02-portal.vercel.app</code>).</li>
+  <li>No projeto do Portal, em <strong>Settings → Environment Variables</strong> (Production e Preview), cadastre:
+    <table>
+      <tr><th>Variável</th><th>Valor</th></tr>
+      <tr><td><code>NEXT_PUBLIC_SITE_URL</code></td><td><code>&lt;URL-DO-PORTAL&gt;</code> (sem barra no fim)</td></tr>
+      <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code></td><td><code>https://hesrhxonnnoyjjodebzm.supabase.co</code></td></tr>
+      <tr><td><code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code></td><td>Supabase → Project Settings → API Keys → <em>Publishable key</em></td></tr>
+      <tr><td><code>GOOGLE_CLIENT_ID</code> / <code>GOOGLE_CLIENT_SECRET</code></td><td>Google Cloud → Clientes → cliente Web</td></tr>
+      <tr><td><code>ADMIN_USUARIO</code></td><td>o e-mail do administrador</td></tr>
+      <tr><td><code>GEMINI_API_KEY</code></td><td>Google AI Studio</td></tr>
+      <tr><td><code>TOKEN_ENCRYPTION_KEY</code></td><td>gerar com <code>node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"</code></td></tr>
+    </table>
+  </li>
+  <li>No projeto <code>perfin-02-site</code>, cadastre <code>PORTAL_URL</code> = <code>&lt;URL-DO-PORTAL&gt;</code> e <code>NEXT_PUBLIC_SITE_URL</code> = URL do site.</li>
+  <li>Faça <strong>Redeploy</strong> dos dois projetos.</li>
+  <li><em>Opcional:</em> reautorize o conector da Vercel no Claude para o escopo <code>daniel-shinohara</code>. Assim eu consigo conferir deploys e nomes de variáveis (nunca os valores).</li>
+</ol>
+<p><span class="ok">Deu certo se:</span> <code>&lt;URL-DO-PORTAL&gt;/login</code> abre a tela com as abas Entrar | Criar conta, e o site mostra o Termômetro com os botões no cabeçalho.</p>
+<div class="caixa info"><code>SUPABASE_SECRET_KEY</code> e <code>DATABASE_URL</code> <strong>não</strong> vão para a Vercel.</div>
+
+<h2><span class="etapa">B</span> Google Cloud Console</h2>
+<ol class="passos">
+  <li><strong>APIs e serviços → Biblioteca:</strong> ative Google Sheets API, Google Drive API, Google Calendar API e Gmail API.</li>
+  <li><strong>Google Auth Platform → Branding → Domínios autorizados:</strong> inclua <code>supabase.co</code> e <code>vercel.app</code> (ou o domínio próprio, se houver).</li>
+  <li><strong>Google Auth Platform → Acesso a dados → Adicionar escopos:</strong>
+    <pre>openid
+email
+profile
+https://www.googleapis.com/auth/drive.file
+https://www.googleapis.com/auth/calendar.events.readonly
+https://www.googleapis.com/auth/gmail.compose</pre></li>
+  <li><strong>Google Auth Platform → Clientes → seu cliente Web:</strong>
+    <ul>
+      <li><strong>Origens JavaScript autorizadas:</strong> <code>&lt;URL-DO-PORTAL&gt;</code></li>
+      <li><strong>URIs de redirecionamento autorizados:</strong> <code>https://hesrhxonnnoyjjodebzm.supabase.co/auth/v1/callback</code></li>
+    </ul>
+    Salve. A alteração pode levar alguns minutos para valer.</li>
+  <li>Gere um <strong>novo client secret</strong> (o atual ficou exposto no <code>DadosPerfin.txt</code>), desative o antigo e atualize a Vercel (A) e o Supabase (C).</li>
+</ol>
+<div class="caixa aviso">
+  <strong>Publicação do app no Google:</strong> enquanto o app OAuth estiver em modo <em>Testing</em>, só os e-mails cadastrados em <strong>Público-alvo → Usuários de teste</strong> conseguem "Continuar com Google", e o acesso ao Drive, Agenda e Gmail expira a cada 7 dias. Para abrir o login Google a qualquer pessoa é preciso publicar o app. Com o escopo do Gmail (restrito), o Google exige uma verificação que pode levar semanas. O cadastro por e-mail e senha funciona sem isso. Se quiser, numa próxima etapa o portal pode pedir esses escopos só quando a pessoa usar Relatórios ou Agenda, o que dispensa a verificação para quem só quer entrar.
+</div>
+<p><span class="ok">Deu certo se:</span> "Continuar com Google" abre a tela de consentimento do Google com o nome do app, e não aparece o erro <code>redirect_uri_mismatch</code>.</p>
+
+<h2 class="quebra"><span class="etapa">C</span> Supabase — projeto <code>perfin_02</code></h2>
+<p>As tabelas (migrações 0001 e 0002) eu aplico pelo conector antes do merge. Os passos abaixo ficam no painel de <strong>Authentication</strong>.</p>
+<ol class="passos">
+  <li><strong>Sign In / Providers → Email:</strong> ativo; <strong>Confirm email</strong> ligado; <strong>Minimum password length</strong> = 10; se disponível no seu plano, ligue <em>Prevent use of leaked passwords</em>.</li>
+  <li><strong>Sign In / Providers → Google:</strong> ativo, com o Client ID e o (novo) Client Secret. Confira que a <em>Callback URL</em> mostrada ali é <code>https://hesrhxonnnoyjjodebzm.supabase.co/auth/v1/callback</code>.</li>
+  <li><strong>URL Configuration:</strong>
+    <ul>
+      <li><strong>Site URL:</strong> <code>&lt;URL-DO-PORTAL&gt;</code></li>
+      <li><strong>Redirect URLs</strong> (adicione as duas):
+        <pre>&lt;URL-DO-PORTAL&gt;/auth/callback
+&lt;URL-DO-PORTAL&gt;/auth/confirmar**</pre></li>
+    </ul></li>
+  <li><strong>Emails → Templates → Confirm signup:</strong> troque o link do corpo por:
+    <pre>&lt;h2&gt;Confirme seu cadastro no Portal Perfin&lt;/h2&gt;
+&lt;p&gt;&lt;a href="{{ .SiteURL }}/auth/confirmar?token_hash={{ .TokenHash }}&amp;type=email"&gt;Confirmar meu e-mail&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Depois de confirmar, um administrador vai liberar seu acesso.&lt;/p&gt;</pre></li>
+  <li><strong>Emails → Templates → Reset Password:</strong>
+    <pre>&lt;h2&gt;Nova senha do Portal Perfin&lt;/h2&gt;
+&lt;p&gt;&lt;a href="{{ .SiteURL }}/auth/confirmar?token_hash={{ .TokenHash }}&amp;type=recovery"&gt;Criar uma nova senha&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Se você não pediu, ignore este e-mail.&lt;/p&gt;</pre></li>
+  <li><strong>Emails → SMTP Settings:</strong> configure um SMTP próprio (por exemplo Resend, Brevo, SendGrid ou o SMTP do Google Workspace), com remetente do domínio da Perfin.
+    <div class="caixa aviso" style="margin-top:4pt">Sem SMTP próprio, o Supabase só envia e-mails para membros da equipe do projeto e com limite baixo por hora. Ou seja, pessoas de fora não recebem a confirmação de cadastro.</div></li>
+  <li><strong>Hooks:</strong> o <em>Before User Created</em> deve ficar <strong>desligado</strong> (a função antiga foi removida). Se ele estiver ligado, nenhum cadastro novo funciona.</li>
+  <li><strong>Sign In / Providers → Email:</strong> se a opção existir no seu painel, ligue <em>Secure password change</em>.</li>
+  <li><strong>Multi-Factor:</strong> ative o TOTP (recomendado para o admin).</li>
+</ol>
+<p><span class="ok">Deu certo se:</span> ao criar uma conta de teste chega o e-mail "Confirme seu cadastro". O link abre a página "Confirmar seu e-mail" e, depois do clique no botão, a tela "Cadastro recebido". O botão existe porque antivírus de e-mail abrem os links sozinhos e gastariam o link antes de você.</p>
+
+<h2><span class="etapa">D</span> Administrador</h2>
+<ol class="passos">
+  <li><strong>SQL Editor</strong> (depois que eu avisar que as migrações foram aplicadas), troque o e-mail e rode:
+    <pre>insert into public.administradores (email) values ('seu-email-de-admin@exemplo.com');</pre>
+    Use o mesmo e-mail de <code>ADMIN_USUARIO</code>, em minúsculas.</li>
+  <li>Em <strong>Authentication → Users</strong>, procure esse e-mail. <strong>Se já existir um usuário com ele que não foi você quem criou</strong> (alguém pode ter se cadastrado antes), <strong>apague-o</strong>. Não o confirme.</li>
+  <li><strong>Authentication → Users → Add user → Create new user:</strong> o mesmo e-mail, com uma senha forte e nova, e <em>Auto Confirm User</em> marcado. Como o e-mail está em <code>administradores</code> e já vem confirmado, o admin nasce <strong>ativo</strong>.</li>
+  <li>Entre no portal pela aba <strong>Entrar</strong> com esse e-mail e senha e cadastre o TOTP, se tiver ativado.</li>
+</ol>
+<p><span class="ok">Deu certo se:</span> o menu lateral mostra o grupo <strong>Administração</strong> com Usuários e Alertas.</p>
+
+<h2><span class="etapa">E</span> GitHub — secrets da carga diária</h2>
+<ol class="passos">
+  <li><strong>github.com/danielshinohara/perfin_02 → Settings → Secrets and variables → Actions → New repository secret:</strong>
+    <ul>
+      <li><code>SUPABASE_URL</code> = <code>https://hesrhxonnnoyjjodebzm.supabase.co</code></li>
+      <li><code>SUPABASE_SECRET_KEY</code> = Supabase → Project Settings → API Keys → <em>Secret key</em> (<code>sb_secret_…</code>). Crie uma, se não houver.</li>
+    </ul></li>
+  <li><strong>Actions → Carga de indicadores → Run workflow</strong> para a primeira carga. Depois ela roda sozinha de segunda a sexta, às 9h.</li>
+</ol>
+<p><span class="ok">Deu certo se:</span> a execução fica verde e os painéis do portal mostram dados.</p>
+<div class="caixa info">
+  <strong>O que já está automatizado no GitHub:</strong> toda PR roda o <strong>CI</strong> (lint, tipos, testes e build do Portal e do Site, testes do script Python e a varredura de segredos com gitleaks). A <code>main</code> só aceita merge com o CI verde. O <strong>Dependabot</strong> abre PRs semanais de atualização. A Vercel continua gerando um preview por PR.
+</div>
+
+<h2 class="quebra"><span class="etapa">F</span> Teste final</h2>
+<table>
+  <tr><th style="width:5%">✓</th><th>Teste</th><th>Resultado esperado</th></tr>
+  <tr><td>☐</td><td>No site, clicar em <strong>Criar conta</strong></td><td>Abre o portal na aba Criar conta</td></tr>
+  <tr><td>☐</td><td>Criar conta com um e-mail pessoal</td><td>Mensagem "Enviamos um link…"; e-mail recebido</td></tr>
+  <tr><td>☐</td><td>Clicar no link do e-mail</td><td>Tela "Cadastro recebido" (pendente)</td></tr>
+  <tr><td>☐</td><td>Admin → Usuários → Aguardando aprovação → <strong>Aprovar</strong></td><td>O usuário passa para Ativos; o selo de pendentes some</td></tr>
+  <tr><td>☐</td><td>O usuário entra de novo com e-mail e senha</td><td>Abre a Visão geral</td></tr>
+  <tr><td>☐</td><td>"Continuar com Google" com uma conta nova (usuário de teste)</td><td>Fica pendente até a aprovação; depois de aprovada, Relatórios e Agenda funcionam</td></tr>
+  <tr><td>☐</td><td>"Esqueci minha senha"</td><td>E-mail recebido → nova senha → entra no portal</td></tr>
+  <tr><td>☐</td><td>Admin entra pelo Google com o mesmo e-mail</td><td>Entra como usuário: sem o menu Administração</td></tr>
+  <tr><td>☐</td><td>Admin bloqueia um usuário</td><td>O usuário vê "Acesso não autorizado"</td></tr>
+  <tr><td>☐</td><td>Tentar entrar 6 vezes com a senha errada</td><td>"Muitas tentativas…"</td></tr>
+  <tr><td>☐</td><td>Criar conta com um e-mail e, <em>sem confirmar</em>, entrar pelo Google com esse mesmo e-mail</td><td>A senha criada antes não deve funcionar mais. Se funcionar, avise: será preciso desligar a vinculação automática de contas</td></tr>
+  <tr><td>☐</td><td>Admin → Usuários com um cadastro não confirmado</td><td>Aparece "E-mail ainda não confirmado" e só o botão Recusar</td></tr>
+</table>
+
+<h2>Se algo der errado</h2>
+<table>
+  <tr><th style="width:38%">Sintoma</th><th>Causa provável</th></tr>
+  <tr><td><code>redirect_uri_mismatch</code> no Google</td><td>A URI do Supabase não está em "URIs de redirecionamento" (B.4)</td></tr>
+  <tr><td>Google volta para o login com "Não foi possível entrar com o Google"</td><td><em>Redirect URLs</em> do Supabase sem <code>&lt;URL-DO-PORTAL&gt;/auth/callback</code> (C.3), ou e-mail fora dos usuários de teste</td></tr>
+  <tr><td>"O link é inválido ou expirou"</td><td>O link já foi usado ou expirou, ou falta <code>/auth/confirmar**</code> nas Redirect URLs, ou o modelo de e-mail não foi trocado (C.4)</td></tr>
+  <tr><td>O e-mail de confirmação não chega</td><td>SMTP próprio não configurado (C.6)</td></tr>
+  <tr><td>O site mostra "Termômetro indisponível"</td><td><code>PORTAL_URL</code> ausente ou errado no projeto do site, ou dados ainda não carregados (E.2)</td></tr>
+  <tr><td>O admin não vê "Administração"</td><td>O e-mail não está em <code>administradores</code>, é diferente de <code>ADMIN_USUARIO</code>, ou o login foi pelo Google</td></tr>
+</table>
+
+<p class="rodape">Portal Perfin · documento gerado a partir de <code>Documentacao/instrucoes/configuracao-login.html</code>. Detalhes técnicos em <code>Documentacao/guia-de-deploy.md</code> e na decisão <code>decisoes/2026-10-08-cadastro-aberto-com-aprovacao.md</code>.</p>
+</body>
+</html>

@@ -151,3 +151,55 @@ a {
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+/* Cabeçalho fixo com acesso ao portal */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--cor-fundo);
+  border-bottom: 1px solid var(--cor-borda);
+}
+
+.cabecalho-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.75rem;
+}
+
+.cabecalho-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 44px;
+  color: var(--cor-texto);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.cabecalho-simbolo {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--cor-botao);
+  color: var(--cor-botao-texto);
+  font-weight: 900;
+}
+
+.cabecalho-acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .cabecalho-acoes .botao {
+    min-height: 44px;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+  }
+}

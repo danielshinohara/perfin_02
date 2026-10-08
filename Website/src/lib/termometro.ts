@@ -1,5 +1,6 @@
 import 'server-only'
 import { z } from 'zod'
+import { urlDoPortal } from './portal'
 
 const esquema = z.object({
   atualizadoEm: z.string(),
@@ -29,13 +30,6 @@ const esquema = z.object({
 export type Termometro = z.infer<typeof esquema>
 
 const UMA_HORA = 3600
-
-/** URL do Portal (Aplicativo), vinda de PORTAL_URL. */
-export function urlDoPortal(caminho = ''): string {
-  const base = process.env.PORTAL_URL
-  if (!base) throw new Error('Variável PORTAL_URL não configurada')
-  return `${base.replace(/\/$/, '')}${caminho}`
-}
 
 /** Busca o termômetro na API pública do Portal, com cache de 1 hora. Retorna null se indisponível. */
 export async function buscarTermometro(): Promise<Termometro | null> {

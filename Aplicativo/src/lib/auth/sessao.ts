@@ -3,7 +3,8 @@ import { cache } from 'react'
 import { redirect } from 'next/navigation'
 import { envServidor } from '@/lib/env'
 import { criarClienteServidor } from '@/lib/supabase/servidor'
-import { metodoDeLogin, papelDaSessao, type MetodoLogin, type Papel } from './papel'
+import { ehSessaoDeRecuperacao, metodoDeLogin, papelDaSessao, type MetodoLogin, type Papel } from './papel'
+import { destinoPorSituacao, lerSituacao, type Situacao } from './validacao'
 
 export interface Sessao {
   userId: string
@@ -11,7 +12,7 @@ export interface Sessao {
   nome: string | null
   papel: Papel
   metodo: MetodoLogin
-  bloqueado: boolean
+  situacao: Situacao
 }
 
 /** Sessão validada no servidor (assinatura e expiração do JWT) + situação do perfil. */
@@ -22,7 +23,7 @@ export const obterSessao = cache(async (): Promise<Sessao | null> => {
   const claims = data.claims
 
   const [{ data: perfil, error: erroPerfil }, { data: adminNoBanco, error: erroAdmin }] = await Promise.all([
-    supabase.from('perfis').select('nome, bloqueado').eq('user_id', claims.sub).maybeSingle(),
+    supabase.from('perfis').select('nome, situacao').eq('user_id', claims.sub).maybeSingle(),
     supabase.rpc('eh_admin'),
   ])
   if (erroPerfil || erroAdmin) throw new Error('Não foi possível carregar o perfil do usuário')
@@ -37,14 +38,14 @@ export const obterSessao = cache(async (): Promise<Sessao | null> => {
     papel: papelApp === 'admin' && adminNoBanco === true ? 'admin' : 'usuario',
     metodo: metodoDeLogin(claims.amr),
     // Sem perfil = não autorizado (nega por padrão).
-    bloqueado: perfil ? perfil.bloqueado : true,
+    situacao: lerSituacao(perfil?.situacao),
   }
 })
 
 export async function exigirUsuario(): Promise<Sessao> {
   const sessao = await obterSessao()
   if (!sessao) redirect('/login')
-  if (sessao.bloqueado) redirect('/acesso-negado')
+  if (sessao.situacao !== 'ativo') redirect(destinoPorSituacao(sessao.situacao))
   return sessao
 }
 
@@ -64,9 +65,17 @@ function erroJson(mensagem: string, status: number): Response {
 export async function autorizarApi(exigirGoogle = false): Promise<ResultadoAutorizacao> {
   const sessao = await obterSessao()
   if (!sessao) return { ok: false, resposta: erroJson('Sessão expirada. Entre novamente.', 401) }
-  if (sessao.bloqueado) return { ok: false, resposta: erroJson('Acesso não autorizado.', 403) }
+  if (sessao.situacao !== 'ativo') return { ok: false, resposta: erroJson('Acesso não autorizado.', 403) }
   if (exigirGoogle && sessao.metodo !== 'google') {
     return { ok: false, resposta: erroJson('Entre com Google para usar este recurso.', 403) }
   }
   return { ok: true, sessao }
+}
+
+/** E-mail da sessão de recuperação de senha recente, ou null (qualquer outra sessão não troca senha). */
+export async function emailDaSessaoDeRecuperacao(): Promise<string | null> {
+  const supabase = await criarClienteServidor()
+  const { data, error } = await supabase.auth.getClaims()
+  if (error || !data?.claims?.sub) return null
+  return ehSessaoDeRecuperacao(data.claims.amr, Math.floor(Date.now() / 1000)) ? (data.claims.email ?? '') : null
 }
