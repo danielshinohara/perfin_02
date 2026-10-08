@@ -40,7 +40,7 @@ jobs:
           python indicadores_brasil.py
       - name: Guardar os CSVs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: indicadores-csv
           path: Aplicativo/scripts/indicadores/saida/
