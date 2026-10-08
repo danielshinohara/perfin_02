@@ -28,7 +28,7 @@ Passo a passo para colocar o Portal Perfin (Aplicativo) e o Website no ar. O sis
 
 ## 3. Supabase
 
-As migrações (`Aplicativo/supabase/migrations/0001_inicial.sql` e `0002_cadastro_e_aprovacao.sql`) são aplicadas em ordem. Depois:
+As migrações `Aplicativo/supabase/migrations/0001` a `0003` são aplicadas em ordem (em 08/10/2026 já foram aplicadas no projeto `perfin_02`). Depois:
 
 1. **SQL Editor:** cadastre o e-mail do administrador (em qualquer ordem: um usuário com esse e-mail **e e-mail confirmado** fica ativo). Se já existir um usuário com esse e-mail que você não criou, apague-o; não o confirme.
    ```sql
