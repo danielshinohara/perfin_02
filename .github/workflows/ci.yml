@@ -1,0 +1,87 @@
+# Validação de PRs e da main: lint, tipos, testes e build dos dois apps,
+# testes do script Python e varredura de segredos.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  aplicativo:
+    name: Aplicativo
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Aplicativo
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: Aplicativo/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      # O build não lê segredos: as variáveis são lidas só em tempo de execução.
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+
+  website:
+    name: Website
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Website
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: Website/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      # URLs fictícias: o termômetro fica indisponível no build e a página trata isso.
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          PORTAL_URL: https://portal.exemplo.invalid
+          NEXT_PUBLIC_SITE_URL: https://site.exemplo.invalid
+
+  script-python:
+    name: Script de indicadores
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Aplicativo/scripts/indicadores
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python -m unittest -v
+
+  segredos:
+    name: Varredura de segredos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
