@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # TypeScript 7 ainda não é suportado pelo typescript-eslint (usado pelo eslint-config-next).
+    ignore:
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
     groups:
       dependencias:
         update-types: [minor, patch]
@@ -13,6 +17,10 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # TypeScript 7 ainda não é suportado pelo typescript-eslint (usado pelo eslint-config-next).
+    ignore:
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
     groups:
       dependencias:
         update-types: [minor, patch]
